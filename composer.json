@@ -1,5 +1,5 @@
 {
-    "name": "sim_1984/laravel-firebird",
+    "name": "sferar/laravel-firebird",
     "description": "A Firebird database package for the Laravel Framework",
     "license": "MIT",
     "version": "1.0.3",
@@ -11,6 +11,10 @@
         {
             "name": "Simonov Denis",
             "email": "sim-mail@list.ru"
+        },
+        {
+            "name": "R-Sfera",
+            "email": "support@rsfera.ru"
         }
     ],
     "prefer-stable": true,
