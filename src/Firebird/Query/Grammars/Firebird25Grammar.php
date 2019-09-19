@@ -188,7 +188,7 @@ class Firebird25Grammar extends Grammar
         // Each one of the columns in the update statements needs to be wrapped in the
         // keyword identifiers, also a place-holder needs to be created for each of
         // the values in the list of bindings so we can make the sets statements.
-        $columns = $this->compileUpdateColumns($values);
+        $columns = $this->compileUpdateColumns($query, $values);
 
 
         $where = $this->compileUpdateWheres($query);
@@ -202,7 +202,7 @@ class Firebird25Grammar extends Grammar
      * @param array $values
      * @return string
      */
-    protected function compileUpdateColumns($values)
+    protected function compileUpdateColumns($query, $values)
     {
         $columns = [];
 
