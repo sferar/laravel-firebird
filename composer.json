@@ -26,7 +26,7 @@
         "illuminate/container": "^6.0",
         "illuminate/database": "^6.0",
         "illuminate/events": "^6.0",
-        "doctrine/instantiator": "~1.0.3"
+        "doctrine/instantiator": "^1.2"
     },
     "autoload":{
         "psr-0": {
