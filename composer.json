@@ -2,7 +2,7 @@
     "name": "sferar/laravel-firebird",
     "description": "A Firebird database package for the Laravel Framework",
     "license": "MIT",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "authors": [
         {
             "name": "Jacques van Zuydam",
