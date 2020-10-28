@@ -58,4 +58,18 @@ class Firebird30Grammar extends Firebird25Grammar
         }
     }
 
+    /**
+     * Compile an exists statement into SQL.
+     *
+     * @param \Illuminate\Database\Query\Builder $query
+     * @return string
+     */
+    public function compileExists(Builder $query)
+    {
+        $select = $this->compileSelect($query);
+
+        return 'select first 1 1 from rdb$relations where exists('.$select.')';
+
+    }
+
 }

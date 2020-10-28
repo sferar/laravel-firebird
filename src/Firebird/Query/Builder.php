@@ -73,4 +73,16 @@ class Builder extends BaseBuilder
         return $this->processor->processExecuteFunction($this, $sql, $values);
     }
 
+    public function exists()
+    {
+        $results = $this->connection->select(
+            $this->grammar->compileExists($this), $this->getBindings(), ! $this->useWritePdo
+        );
+        // If the results has rows, we will get the row and see if the exists column is a
+        // boolean true. If there is no results for this query we will return false as
+        // there are no rows for this query at all and we can return that info here.
+
+        return isset($results[0]);
+    }
+
 }
