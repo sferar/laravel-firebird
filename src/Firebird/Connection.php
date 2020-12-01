@@ -2,6 +2,7 @@
 
 namespace Firebird;
 
+use Closure;
 use Firebird\Query\Builder as QueryBuilder;
 use Firebird\Query\Grammars\Firebird15Grammar as QueryGrammar10;
 use Firebird\Query\Grammars\Firebird25Grammar as QueryGrammar20;
@@ -10,6 +11,7 @@ use Firebird\Query\Processors\FirebirdProcessor as Processor;
 use Firebird\Schema\Builder as SchemaBuilder;
 use Firebird\Schema\Grammars\FirebirdGrammar as SchemaGrammar;
 use PDO;
+use Throwable;
 
 class Connection extends \Illuminate\Database\Connection
 {
@@ -156,6 +158,52 @@ class Connection extends \Illuminate\Database\Connection
         $query = $this->getQueryBuilder();
 
         $query->executeProcedure($procedure, $values);
+    }
+
+    /**
+     * Execute a Closure within a transaction.
+     *
+     * @param  \Closure  $callback
+     * @param  int  $attempts
+     * @return mixed
+     *
+     * @throws \Throwable
+     */
+    public function transaction(Closure $callback, $attempts = 1)
+    {
+        for ($currentAttempt = 1; $currentAttempt <= $attempts; $currentAttempt++) {
+            $this->beginTransaction();
+
+            // We'll simply execute the given callback within a try / catch block and if we
+            // catch any exception we can rollback this transaction so that none of this
+            // gets actually persisted to a database or stored in a permanent fashion.
+            try {
+                $callbackResult = $callback($this);
+            }
+
+                // If we catch an exception we'll rollback this transaction and try again if we
+                // are not out of attempts. If we are out of attempts we will just throw the
+                // exception back out and let the developer handle an uncaught exceptions.
+            catch (Throwable $e) {
+                $this->handleTransactionException(
+                    $e, $currentAttempt, $attempts
+                );
+
+                continue;
+            }
+
+            try {
+                $this->commit();
+            } catch (Throwable $e) {
+                $this->handleCommitTransactionException(
+                    $e, $currentAttempt, $attempts
+                );
+
+                continue;
+            }
+
+            return $callbackResult;
+        }
     }
 
     /**
